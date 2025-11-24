@@ -664,7 +664,7 @@ public final class JsonSchemaReader {
         object.setDefault(getBoolean(element));
       }
       else if (element.isNull()) {
-        object.setDefault("null");
+        object.setDefault(JsonSchemaFileValuesIndex.NULL);
       }
     };
   }
