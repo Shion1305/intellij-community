@@ -1296,4 +1296,35 @@ public class JsonSchemaHighlightingTest extends JsonSchemaHighlightingTestBase {
     doTest("{ \"required\": [\"test3\"]}",
            "<warning descr=\"Missing required property 'test3'\">{}</warning>");
   }
+
+  public void testNullInTypeArrayWithDefaultNull() {
+    // Test case for: default: null should be valid when type includes "null"
+    doTest("""
+             {
+               "properties": {
+                 "flag": {
+                   "type": ["boolean", "null"]
+                 }
+               }
+             }""", """
+             {
+               "flag": null
+             }""");
+  }
+
+  public void testNullNotInTypeArray() {
+    // Test case for: default: null should be invalid when type does NOT include "null"
+    doTest("""
+             {
+               "properties": {
+                 "flag": {
+                   "type": ["boolean", "string"]
+                 }
+               }
+             }""", """
+             {
+               "flag": <warning descr="Incompatible types.
+             Required one of: boolean, string. Actual: null.">null</warning>
+             }""");
+  }
 }
