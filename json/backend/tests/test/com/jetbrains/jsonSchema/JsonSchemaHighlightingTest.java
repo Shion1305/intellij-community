@@ -1296,4 +1296,81 @@ public class JsonSchemaHighlightingTest extends JsonSchemaHighlightingTestBase {
     doTest("{ \"required\": [\"test3\"]}",
            "<warning descr=\"Missing required property 'test3'\">{}</warning>");
   }
+
+  public void testNullValueWithBooleanType() {
+    // Test: type is boolean only, null value should error
+    doTest("""
+             {
+               "properties": {
+                 "flag": {
+                   "type": ["boolean"]
+                 }
+               }
+             }""", """
+             {
+               "flag": <warning descr="Incompatible types.
+             Required: boolean. Actual: null.">null</warning>
+             }""");
+  }
+
+  public void testNullValueWithBooleanAndNullType() {
+    // Test: type includes null, null value should be valid
+    doTest("""
+             {
+               "properties": {
+                 "flag": {
+                   "type": ["boolean", "null"]
+                 }
+               }
+             }""", """
+             {
+               "flag": null
+             }""");
+  }
+
+  public void testBooleanValueWithBooleanType() {
+    // Test: type is boolean, boolean value should be valid
+    doTest("""
+             {
+               "properties": {
+                 "flag": {
+                   "type": ["boolean"]
+                 }
+               }
+             }""", """
+             {
+               "flag": true
+             }""");
+  }
+
+  public void testBooleanValueWithBooleanAndNullType() {
+    // Test: type includes boolean and null, boolean value should be valid
+    doTest("""
+             {
+               "properties": {
+                 "flag": {
+                   "type": ["boolean", "null"]
+                 }
+               }
+             }""", """
+             {
+               "flag": false
+             }""");
+  }
+
+  public void testNullValueWithStringAndNumberType() {
+    // Test: type is string or number, null value should error
+    doTest("""
+             {
+               "properties": {
+                 "value": {
+                   "type": ["string", "number"]
+                 }
+               }
+             }""", """
+             {
+               "value": <warning descr="Incompatible types.
+             Required one of: number, string. Actual: null.">null</warning>
+             }""");
+  }
 }
